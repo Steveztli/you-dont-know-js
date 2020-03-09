@@ -1,4 +1,4 @@
-import * as functions from "./functions";
+import * as functions from "./ch2";
 
 describe("Typeof", () => {
   test("mapping", () => {
@@ -18,10 +18,12 @@ describe("Typeof", () => {
   });
 });
 
-describe("Equality", () => {
-  test("comparing with coercion", () => {
+describe("Comparing", () => {
+  test("equals with coercion", () => {
     expect(functions.doubleEquality(1, "1")).toBeTruthy();
     expect(functions.tripleEquality(1, "1")).toBeFalsy();
+    //coercion for equals operator defaults to numbers
+    expect(functions.doubleEquality(true, 3)).toBeFalsy();
   });
   
   test("comparing data", () => {
