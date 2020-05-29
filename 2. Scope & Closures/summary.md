@@ -57,4 +57,55 @@ console.log(nextStudent);
 If we would be using `strict mode` this would throw a `ReferenceError`.
 
 
-## Chapter 3
+## Chapter 3 - The Scope chain
+
+### Lookup is mostly conceptual
+
+The scope is usually determined during the intitial compilation, this improves the performance of the engine not needing to request for the scope at runtime. However in some case the scope is unknown, this is the case is you have shared global variables defined in another files, for that case the engine will need to use its lookup once per variable at runtime.
+
+### Shadowing
+
+Two variables can have the same name but they need to be in different scopes. 
+If the variable `X` is in a nested scope of the variable `Y`, `X` will shadow `Y` and make it unaccessible from the scope of `X`.
+
+### Global unshadowing trick
+
+/!\ Do not use
+
+Global variable are still accessible using `windows.Y`. This works only with variable that have been declared as `var` or `function` in the global scope.
+
+```javascript
+var one = 1; -> 1
+let notOne = 2; -> undefined
+const notTwo = 3; -> undefined
+class notThree {} -> undefined
+```
+
+### Illegal shadowing
+
+`var` vs `let` and `const`
+
+```javascript
+function something() {
+    var special = "JavaScript";
+    {
+        let special = 42;
+    }
+}
+```
+This works
+
+```javascript
+function another() {
+    {
+        let special = "JavaScript";
+        {
+            var special = "JavaScript";
+            // Syntax Error
+        }
+    }
+}
+```
+Because the scope of `var` is limited by the function, this is not possible. If `var` would be in a nested function instead of `{}`, the code above would compile.
+
+## Chapter 4
