@@ -108,4 +108,82 @@ function another() {
 ```
 Because the scope of `var` is limited by the function, this is not possible. If `var` would be in a nested function instead of `{}`, the code above would compile.
 
-## Chapter 4
+## Chapter 4 - Around the global scope
+
+### Why global scope?
+
+Most of JS applications are composed of multiple files, how can they run together in a single runtime context?
+
+1. By using ES modules and the `import` statement, the engine knows which files to load.
+2. By using a bundler that will contactenate all the files into a big one.
+3. By using the global scope.
+
+### Where exactly is this global scope?
+
+#### Globals shadowing globals
+
+`let` and `const` adds a global variable but not a global object property, then the global `something` shadows the global object property.
+
+It's a bad idea to create divergence between the global object and the global scope. 
+Always use `var` for globals.
+
+```javascript
+window.something = 42; // same behavior if: var something = 42
+let something = "Kyle";
+console.log(something);// Kyle
+console.log(window.something);// 42
+```
+
+#### DOM globals
+
+Some browser-based JS application automatically creates a global variable for every DOM element with an id.
+Don't use it.
+
+#### What's in window name
+
+`Window.name` is actually a pre-defined getter/setter on the `window` object, which insists on its value being a string. 
+
+```javascript
+var name = 3
+console.log(windows.name) // "3"
+```
+
+#### Web workers
+
+Web workers is a platform extension on top of the browser-JS behavior, which allows a JS file to run in a completely separate thread. 
+That implies that they are restricted in their communication with the main application thread (eg: no access to the global scope) to limit race conditions and that they don't have access to the DOM (eg: the `window` object).
+
+In a Web Worker, the global object reference is made by using `self`.
+
+#### Developer tools console
+
+They are differences between a developer tools console and a pure JS environment, a .js file running on a brower. 
+Those differences are observable in:
+
+- The behavior of the global scope
+- Hoisting
+- Block-scoping declarators (`let` and `const`) when used is the outermost scope. 
+
+/!\ Developer tools console is not suitable to verify an actual JS application context.
+
+#### ES Modules
+
+Variables declare in the outermost scope are not global variables, they are module-global. 
+However the module-global scope is descended from the global scope and thus have access to the global variables.
+
+#### Global this
+
+This is another cheat to have access to the global scope.
+
+```javascript
+const theGlobalScopeObject = (new Function("return this"))();
+```
+
+As of ES2020, JS have standardized the `globalThis`, this new option aims to align the different possibilities of accessing the global scope in every JS environment: 
+
+- `New Function()`
+- `self`
+- `window`
+- `global`
+
+## Chapter 5 - The (not so) secret lifecycle of variables
