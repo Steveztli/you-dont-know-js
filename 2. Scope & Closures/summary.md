@@ -187,3 +187,124 @@ As of ES2020, JS have standardized the `globalThis`, this new option aims to ali
 - `global`
 
 ## Chapter 5 - The (not so) secret lifecycle of variables
+
+Hoisting is used for a variable being visible from the beginning of its enclosing scope, even though its declaration may appear further down in the scope.
+
+JavaScript not only have a variable hoisting but also a function hoisting.
+`var` and `function` attached their name identifiers to the nearest enclosing function scope.
+
+### Hoisting: declartion vs expression
+
+Function hoisting only applies to formal function declaration.
+
+```javascript
+greeting(); // Hello!
+function greeting() {
+    console.log("Hello!");
+}
+```
+
+```javascript
+greeting();// TypeError
+var greeting = function greeting() {
+    console.log("Hello!");
+};
+```
+
+Why does it throw a TypeError and not a ReferenceError? Because `var` are automatically initialized with `undefined`.
+
+### Variable hoisting
+
+```javascript
+greeting = "Hello!";
+console.log(greeting);// Hello!
+var greeting = "Howdy!";
+```
+
+First `greeting` gets hoisted with `undefined`, then it's being assigned to `Hello!´.
+
+### Re-declaration
+
+```javascript
+var studentName = "Frank";
+console.log(studentName); // Frank
+var studentName; // this is ignored as the variable already exist
+console.log(studentName); // Frank
+```
+This is because hoisting is only about registration.
+
+Keep in mind that `var studentName` is not the same as `var studentName = undefined`
+```javascript
+var studentName = "Frank";
+console.log(studentName);   // Frank
+var studentName;
+console.log(studentName);   // Frank <--- still!
+var studentName = undefined;
+console.log(studentName);   // undefined <--- see!?
+```
+
+#### Let
+
+Any re-declaration using a `let` statement will fail with `SyntaxError`.
+
+#### Constants
+
+`const` is more constrained than `let`, it requires a variable to be initialized and cannot be re-assigned.
+
+```javascript
+const empty; //SyntaxError
+```
+#### Loops
+
+In for-loops, the `i` often used`as index is declared outside the loop, `i` gets assigned with a new value on each iteration.
+
+```javascript
+for (const index in students) {
+    // this is fine
+}
+```
+However
+```javascript
+for (const i = 0; i < 3; i++) {
+    // a Type Error after the first iteration
+}
+```
+As the `i` is part of the outer scope of the for-loop, it can't be a const because on the second iteration, it will try to assign it another value.
+
+### Uninitialized variables (aka TDZ)
+
+`let` and `const` aren't hoisted.
+```javascript
+studentName = "Suzy"; // ReferenceError
+console.log(studentName);
+let studentName;
+```
+
+`let` or `const` being uninitialized or initialized will hold the value `undefined`. There are no difference, which is different from `var` as we have seen earlier (-> Ch5: Re-declaration).
+
+
+#### TDZ- Temporal Dead Zone
+
+TDZ is the time window where a variable exists but is still uninitialized. `let` and `const` have an observable TDZ while `var` has a TDZ but is not observable.
+
+```javascript
+askQuestion(); // ReferenceError
+let studentName = "Suzy";
+function askQuestion() {
+    console.log(`${ studentName }, do you know?`);
+}
+```
+
+This is because `askQuestion()` is invoked before the code reached the declaration of `studentName`
+
+```javascript 
+var studentName = "Kyle";
+{
+    console.log(studentName); //Reference error 
+    // because studentName was defined in that scope, the program "hoisted" this variable.
+    let studentName = "Suzy";
+    console.log(studentName);// Suzy
+}
+```
+
+TDZ errors occur because `let` and `const` declarations do hoist their declarations to the top of their scopes, but unlike `var`, they defer the auto-initialization of their variables until the moment in the code's sequencing where the original declaration appeared.
