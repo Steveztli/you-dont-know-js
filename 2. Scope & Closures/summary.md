@@ -308,3 +308,64 @@ var studentName = "Kyle";
 ```
 
 TDZ errors occur because `let` and `const` declarations do hoist their declarations to the top of their scopes, but unlike `var`, they defer the auto-initialization of their variables until the moment in the code's sequencing where the original declaration appeared.
+
+## Chapter 6 - Limiting Scope Exposure
+
+### IIFE
+
+Don't use IIFE if you intend to have `return`, `this`, `break` or `continue`.
+
+### Scoping with blocks
+
+Not all `{}` creates blocks (and then are eligible to become scopes). Those doesn't create blocks: `Class`, `Object literlas`, `Function` or `Switch`.
+
+### When to use let or var
+
+Try to block-scope everything and give the less visiility of your variables using `let`. Only use `var` if the variable is used in the whole function scope.
+
+### What's the catch?
+
+```javascript
+try {
+    doesntExist();
+}
+catch (err) {
+    console.log(err); // prints the error message
+    let onlyHere = true;
+    var outerVariable = true;
+}
+console.log(outerVariable);     // true
+console.log(err); // Reference error
+```
+
+The `err` in the `catch` is handled like a `let` variable.
+
+Since ES2019, `catch` does not need parameter
+
+```javascript
+try {
+    doOptionOne();
+}
+catch {
+    doOptionTwoInstead();
+}
+```
+
+ ### Function Declaration in Blocks (FiB)
+
+ `function` declaration are equivalent to `var`.
+
+```javascript
+ if (false) {
+    function ask() {
+        console.log("Does this run?");
+    }
+}
+ask();
+```
+According to JS specifications, this code should normally result in `ReferenceError` because `ask` is block-scoped to the `if` statement.
+However mosr Javascript Engine will result in `TypeError`, because `ask` identifier exist but was not assigned anything because of the `if (false)`.
+
+If it's not worth it, avoid FiB.
+
+## Chapter 7 - Using Closures
