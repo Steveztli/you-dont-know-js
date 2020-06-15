@@ -1,4 +1,4 @@
-# Scope & Closures
+# YDKJS - Scope & Closures
 
 ## Chapter 1 - What's the scope
 ### Compiled or Interpreted
